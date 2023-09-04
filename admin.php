@@ -23,7 +23,11 @@ $PAGE->set_pagelayout('admin');
 echo $OUTPUT->header();
 
 $template = (Object)[
-    'title' => $title
+    'title' => $title,
+    'assign_iqa' => get_string('assign_iqa', $p),
+    'submit' => get_string('submit', $p),
+    'view_iqa' => get_string('view_iqa', $p),
+    'remove_iqa' => get_string('remove_iqa', $p)
 ];
 echo $OUTPUT->render_from_template('local_iqa/admin', $template);
 

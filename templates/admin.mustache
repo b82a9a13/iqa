@@ -1,2 +1,41 @@
 <link rel="stylesheet" type="text/css" href="./classes/css/admin.css">
 <h1 class='text-center'>{{title}}</h1>
+<div class='text-center'>
+    <button class='btn btn-primary' id="assign_iqa_btn">{{assign_iqa}}</button>
+    <button class='btn btn-primary' id="view_iqa_btn">{{view_iqa}}</button>
+    <button class='btn btn-primary' id="remove_iqa_btn">{{remove_iqa}}</button>
+</div>
+<div id="assign_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
+    <h2>{{assign_iqa}}</h2>
+    <form id="assign_iqa_form">
+        <div class='center-div-content'>
+            <div>
+                <h4>{{user}}</h4>
+                <select id="choose_au" required></select>
+            </div>
+        </div>
+        <h4 class='text-success' id="assign_success" style='display:none;'></h4>
+        <h4 class='text-danger' id="assign_error" style='display:none;'></h4>
+        <button class='btn btn-primary mt-1' type="submit" id="assign_iqa_submit">{{submit}}</button>
+    </form>
+</div>
+<div id="view_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
+    <h2>{{view_iqa}}</h2>
+    <div id="view_iqa_content" class='center-div-content'></div>
+    <h4 class='text-danger' id="view_error" style='display:none;'></h4>
+</div>
+<div id="remove_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
+    <h2>{{remove_iqa}}</h2>
+    <form id="remove_iqa_form">
+        <div class='center-div-content'>
+            <div>
+                <h4>{{user}}</h4>
+                <select id="remove_au" required></select>
+            </div>
+        </div>
+        <h4 class='text-success' id="remove_success" style='display:none;'></h4>
+        <h4 class='text-danger' id="remove_error" style='display:none;'></h4>
+        <button class='btn btn-primary mt-1' type="submit" id="remove_iqa_submit">{{submit}}</button>
+    </form>
+</div>
+<script defer src='./amd/src/admin.js'></script>
