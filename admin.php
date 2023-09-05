@@ -24,10 +24,13 @@ echo $OUTPUT->header();
 
 $template = (Object)[
     'title' => $title,
-    'assign_iqa' => get_string('assign_iqa', $p),
+    'assign' => get_string('assign', $p),
     'submit' => get_string('submit', $p),
-    'view_iqa' => get_string('view_iqa', $p),
-    'remove_iqa' => get_string('remove_iqa', $p)
+    'view' => get_string('view', $p),
+    'remove' => get_string('remove', $p),
+    'logs' => get_string('logs', $p),
+    'oneweekago' => date('Y-m-d',strtotime('-1 week', time())),
+    'currentdate' => date('Y-m-d', strtotime('+1 day',time()))
 ];
 echo $OUTPUT->render_from_template('local_iqa/admin', $template);
 
