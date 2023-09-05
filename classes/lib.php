@@ -58,4 +58,18 @@ class lib{
         asort($array);
         return $array;
     }
+
+    //Function is used to remove a user from iqa
+    public function remove_iqa($id): bool{
+        global $DB;
+        if(!$DB->record_exists('iqa_assignment', [$DB->sql_compare_text('iqaid') => $id])){
+            return false;
+        } else {
+            if($DB->delete_records('iqa_assignment', [$DB->sql_compare_text('iqaid') => $id]) > 0){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 }

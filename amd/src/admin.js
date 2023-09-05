@@ -143,7 +143,7 @@ $('#remove_iqa_btn')[0].addEventListener('click', ()=>{
 });
 $('#remove_iqa_form')[0].addEventListener('submit', (e)=>{
     e.preventDefault();
-    const input = $('#remove_au');
+    const input = $('#remove_au')[0];
     if(input.value == ''){
         removeError.innerText = 'No input provided';
         removeError.style.display = 'block';
@@ -160,7 +160,10 @@ $('#remove_iqa_form')[0].addEventListener('submit', (e)=>{
                     removeError.innerText = text['error'];
                     removeError.style.display = 'block';
                 } else if(text['return']){
-
+                    removeSuccess.innerText = 'Success';
+                    $("#remove_au option[value='"+input.value+"']")[0].remove();
+                    $("#remove_au option[value='']").prop('selected', true);
+                    removeSuccess.style.display = 'block';
                 } else {
                     removeError.innerText = 'Submit error';
                     removeError.style.display = 'block';
