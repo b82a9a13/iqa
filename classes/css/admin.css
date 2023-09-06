@@ -10,3 +10,6 @@
     display: flex;
     flex-wrap: wrap;
 }
+.c-pointer{
+    cursor: pointer;
+}

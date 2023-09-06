@@ -135,7 +135,165 @@ function view_data(string){
 }
 view_data('view');
 view_data('logs');
-$('#logs_iqa_filter_form').addEventListener('submit', (e)=>{
+//Function is used to retrieve log data dependant on the form data
+$('#logs_iqa_filter_form')[0].addEventListener('submit', (e)=>{
     e.preventDefault();
-    
+    const error = $('#logs_error')[0];
+    const content = $(`#logs_iqa_content`)[0];
+    content.style.display = 'none';
+    error.style.display = 'none';
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', './classes/inc/admin_logs_iqa_render.inc.php', false);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function(){
+        if(this.status == 200){
+            const text = JSON.parse(this.responseText);
+            if(text['error']){
+                error.innerText = text['error'];
+                error.style.display = 'block';
+            } else if(text['return']){
+                content.innerHTML = text['return'];
+                content.style.display = 'block';
+            } else {
+                error.innerText = 'No data available';
+                error.style.display = 'block';
+            }
+        } else {
+            error.innerText = 'Connection error';
+            error.style.display = 'block';
+        }
+    }
+    xhr.send(`sd=${$('#startdate')[0].value}&ed=${$('#enddate')[0].value}`);
 });
+//Function is used to sort table data, dependant on what header was clicked
+function header_clicked(string, integer){
+    if(string == 'view' /*|| string == 'logs'*/){
+        //Set the headers of the table to caontain the correct arrow showing how to table data is sorted
+        const headers = $(`#${string}_thead`).find('tr:first th');
+        let order = 'asc';
+        for(let i = 0; i < headers.length; i++){
+            if(i === integer){
+                switch (headers[i].getAttribute('sort')){
+                    case 'asc':
+                        headers[i].setAttribute('sort', 'desc');
+                        headers[i].querySelector('span').innerHTML = '&darr;';
+                        order = 'desc';
+                        break;
+                    case 'desc':
+                        headers[i].setAttribute('sort', 'asc');
+                        headers[i].querySelector('span').innerHTML = '&uarr;';
+                        break;
+                    case '':
+                        headers[i].setAttribute('sort', 'asc');
+                        headers[i].querySelector('span').innerHTML = '&uarr;';
+                        break;
+                }
+            } else {
+                headers[i].setAttribute('sort', '');
+                headers[i].querySelector('span').innerHTML = '';
+            }
+        }
+        //Get all the table data and put it into a array, and only performs the task if there is data within the table to sort and there isn't just one record
+        const body = $(`#${string}_tbody`).find('tr');
+        if(body.length > 1){
+            let array = [];
+            for(let i = 0; i < body.length; i++){
+                const row = body.eq(i).find('td');
+                const tmpArray = [];
+                for(let y = 0; y < row.length; y++){
+                    const td = row.eq(y)[0];
+                    if(/[0-9]/.test(td.innerText) === true && td.innerText.includes('/') === true && td.innerText.includes(':') === true && /[a-zA-Z]/.test(td.innerText) === false){
+                        //Something goes wrong here and doesn't add to the array correctly
+                        tmpArray.push([td.getAttribute('dtval'), 'date']);
+                    } else if(td.querySelector('a')){
+                        tmpArray.push([td.innerText, td.querySelector('a').getAttribute('href')]);
+                    } else {
+                        tmpArray.push([td.innerText, null]);
+                    }
+                }
+                if(integer != 0){
+                    const tmpData = tmpArray[0];
+                    tmpArray[0] = tmpArray[integer];
+                    tmpArray[integer] = tmpData;
+                }
+                array.push(tmpArray);
+            }
+            console.log(array);
+            /*
+            body.each(function(index, row){
+                const tds = $(row).find('td');
+                let tmpArray = [];
+                tds.each(function(tdindex, td){
+                    if(/[0-9]/.test(td.innerText) === true && td.innerText.includes('/') === true && td.innerText.includes(':') === true && /[a-zA-Z]/.test(td.innerText) === false){
+                        tmpArray.push([td.innerText, 'dateTime']);
+                    } else if(td.querySelector('a')){
+                        tmpArray.push([td.innerText, td.querySelector('a').getAttribute('href')]);
+                    } else {
+                        tmpArray.push([td.innerText, null]);
+                    }
+                });
+                if(integer != 0){
+                    const tmpData = tmpArray[0];
+                    tmpArray[0] = tmpArray[integer];
+                    tmpArray[integer] = tmpData;
+                }
+                array.push(tmpArray);
+            });
+            console.log(array);
+            */
+            //Sorts the data in the array
+            switch (order){
+                case 'asc':
+                    if(/[0-9]/.test(array[0][0]) === true && /[a-zA-Z]/.test(array[0][0]) === false){
+                        array.sort(function(a,b){return parseFloat(a[0]) - parseFloat(b[0])});
+                    } else {
+                        array.sort(function(a,b){
+                            const x = a[0][0];
+                            const y = b[0][0];
+                            if(x < y){return -1;}
+                            if(y < x){return 1;}
+                            return 0;
+                        });
+                    }
+                    break;
+                case 'desc':
+                    array.reverse();
+                    break;
+            }
+            //Rearrange the array to the default arrangement
+            let sortedArray = [];
+            if(body.first().find('td').length > 1){
+                array.forEach(function(element){
+                    const tmpData = element[integer];
+                    tmpData[integer] = element[0];
+                    element[0] = tmpData;
+                    sortedArray.push(element);
+                });
+            } else {
+                sortedArray = array;
+            }
+            //Adds the data back to the table
+            const tbody = $(`#${string}_tbody`)[0];
+            tbody.innerHTML = '';
+            sortedArray.forEach(function(element){
+                let row = '<tr>';
+                for(let i = 0; i < element.length; i++){
+                    switch (element[i][1]){
+                        case 'date':
+                            element[i][0] = new Date(element[i][0] * 1000);
+                            row += `<td>${String(element[i][0].getDate()).padStart(2, '0')}/${String(element[i][0].getMonth() + 1).padStart(2, '0')}/${element[i][0].getFullYear()} ${String(element[i][0].getHours()).padStart(2, '0')}:${String(element[i][0].getMinutes()).padStart(2, '0')}:${String(element[i][0].getSeconds()).padStart(2, '0')}</td>`;
+                            break;
+                        case null:
+                            row += `<td>${element[i][0]}</td>`;
+                            break;
+                        default:
+                            row += `<td><a href='window.location.href=${element[i][1]}'>${element[i][0]}</a></td>`;
+                            break;
+                    }
+                }
+                row += '</tr>';
+                tbody.innerHTML += row;
+            });
+        }
+    }
+}

@@ -28,20 +28,20 @@ if(!isset($_SESSION['iqa_admin'])){
             $array = $lib->get_assign_logs($sd, $ed);
             if(!empty($array)){
                 $returnText->return = "<table class='table table-bordered table-striped table-hover'>
-                    <thead>
+                    <thead id='logs_thead'>
                         <tr>
-                            <th>Date & Time</th>
-                            <th>Action</th>
-                            <th>Affected User</th>
-                            <th>User</th>
+                            <th class='c-pointer' onclick='header_clicked(`logs`, 0)' sort='asc'>Date & Time <span>&uarr;</span></th>
+                            <th class='c-pointer' onclick='header_clicked(`logs`, 1)' sort>Action <span></span></th>
+                            <th class='c-pointer' onclick='header_clicked(`logs`, 2)' sort>Affected User <span></span></th>
+                            <th class='c-pointer' onclick='header_clicked(`logs`, 3)' sort>User <span></span></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id='logs_tbody'>
                 ";
                 foreach($array as $arra){
                     $returnText->return .= "
                         <tr>
-                            <td>".date('d/m/Y H:i:s',$arra[0])."</td>
+                            <td dtval='$arra[0]'>".date('d/m/Y H:i:s',$arra[0])."</td>
                             <td>$arra[1]</td>
                             <td><a href='./../../user/profile.php?id=$arra[4]' target='_blank'>$arra[5]</a></td>
                             <td><a href='./../../user/profile.php?id=$arra[2]' target='_blank'>$arra[3]</a></td>
