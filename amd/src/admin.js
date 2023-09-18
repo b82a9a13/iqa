@@ -167,7 +167,7 @@ $('#logs_iqa_filter_form')[0].addEventListener('submit', (e)=>{
 });
 //Function is used to sort table data, dependant on what header was clicked
 function header_clicked(string, integer){
-    if(string == 'view' /*|| string == 'logs'*/){
+    if(string == 'view'){
         //Set the headers of the table to caontain the correct arrow showing how to table data is sorted
         const headers = $(`#${string}_thead`).find('tr:first th');
         let order = 'asc';
@@ -197,35 +197,13 @@ function header_clicked(string, integer){
         const body = $(`#${string}_tbody`).find('tr');
         if(body.length > 1){
             let array = [];
-            for(let i = 0; i < body.length; i++){
-                const row = body.eq(i).find('td');
-                const tmpArray = [];
-                for(let y = 0; y < row.length; y++){
-                    const td = row.eq(y)[0];
-                    if(/[0-9]/.test(td.innerText) === true && td.innerText.includes('/') === true && td.innerText.includes(':') === true && /[a-zA-Z]/.test(td.innerText) === false){
-                        //Something goes wrong here and doesn't add to the array correctly
-                        tmpArray.push([td.getAttribute('dtval'), 'date']);
-                    } else if(td.querySelector('a')){
-                        tmpArray.push([td.innerText, td.querySelector('a').getAttribute('href')]);
-                    } else {
-                        tmpArray.push([td.innerText, null]);
-                    }
-                }
-                if(integer != 0){
-                    const tmpData = tmpArray[0];
-                    tmpArray[0] = tmpArray[integer];
-                    tmpArray[integer] = tmpData;
-                }
-                array.push(tmpArray);
-            }
-            console.log(array);
-            /*
             body.each(function(index, row){
                 const tds = $(row).find('td');
                 let tmpArray = [];
                 tds.each(function(tdindex, td){
-                    if(/[0-9]/.test(td.innerText) === true && td.innerText.includes('/') === true && td.innerText.includes(':') === true && /[a-zA-Z]/.test(td.innerText) === false){
-                        tmpArray.push([td.innerText, 'dateTime']);
+                    if(td.hasAttribute('dtval')){
+                        //Something wrong here
+                        tmpArray.push([td.getAttribute('dtval'), 'dtval']);
                     } else if(td.querySelector('a')){
                         tmpArray.push([td.innerText, td.querySelector('a').getAttribute('href')]);
                     } else {
@@ -240,7 +218,6 @@ function header_clicked(string, integer){
                 array.push(tmpArray);
             });
             console.log(array);
-            */
             //Sorts the data in the array
             switch (order){
                 case 'asc':
@@ -279,9 +256,11 @@ function header_clicked(string, integer){
                 let row = '<tr>';
                 for(let i = 0; i < element.length; i++){
                     switch (element[i][1]){
-                        case 'date':
+                        case 'dtval':
+                            console.log(element[i]);
+                            const dateOrig = element[i][0];
                             element[i][0] = new Date(element[i][0] * 1000);
-                            row += `<td>${String(element[i][0].getDate()).padStart(2, '0')}/${String(element[i][0].getMonth() + 1).padStart(2, '0')}/${element[i][0].getFullYear()} ${String(element[i][0].getHours()).padStart(2, '0')}:${String(element[i][0].getMinutes()).padStart(2, '0')}:${String(element[i][0].getSeconds()).padStart(2, '0')}</td>`;
+                            row += `<td dtval='${dateOrig}'>${String(element[i][0].getDate()).padStart(2, '0')}/${String(element[i][0].getMonth() + 1).padStart(2, '0')}/${element[i][0].getFullYear()} ${String(element[i][0].getHours()).padStart(2, '0')}:${String(element[i][0].getMinutes()).padStart(2, '0')}:${String(element[i][0].getSeconds()).padStart(2, '0')}</td>`;
                             break;
                         case null:
                             row += `<td>${element[i][0]}</td>`;
