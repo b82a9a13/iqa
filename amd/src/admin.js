@@ -165,10 +165,9 @@ $('#logs_iqa_filter_form')[0].addEventListener('submit', (e)=>{
     }
     xhr.send(`sd=${$('#startdate')[0].value}&ed=${$('#enddate')[0].value}`);
 });
-//Function is used to sort table data, dependant on what header was clicked
 function header_clicked(string, integer){
-    if(string == 'view'){
-        //Set the headers of the table to caontain the correct arrow showing how to table data is sorted
+    if(string == 'view' || string == 'logs'){
+        //set the headers of the table to contain the correct arrow showing how the table is sorted
         const headers = $(`#${string}_thead`).find('tr:first th');
         let order = 'asc';
         for(let i = 0; i < headers.length; i++){
@@ -193,7 +192,7 @@ function header_clicked(string, integer){
                 headers[i].querySelector('span').innerHTML = '';
             }
         }
-        //Get all the table data and put it into a array, and only performs the task if there is data within the table to sort and there isn't just one record
+        //Get all the table data and put it into a array, and only performs the task if there is data within the table to sort
         const body = $(`#${string}_tbody`).find('tr');
         if(body.length > 1){
             let array = [];
@@ -201,23 +200,20 @@ function header_clicked(string, integer){
                 const tds = $(row).find('td');
                 let tmpArray = [];
                 tds.each(function(tdindex, td){
-                    if(td.hasAttribute('dtval')){
-                        //Something wrong here
-                        tmpArray.push([td.getAttribute('dtval'), 'dtval']);
-                    } else if(td.querySelector('a')){
+                    if(/[0-9]/.test(td.innerText) === true && td.innerText.includes('/') === true && /[a-zA-Z]/.test(td.innerText) === false){
+                        tmpString = td.innerText.split('/');
+                        tmpArray.push([td.getAttribute('dtval'), 'date']);
+                    }else if(td.querySelector('a')){
                         tmpArray.push([td.innerText, td.querySelector('a').getAttribute('href')]);
-                    } else {
+                    } else{
                         tmpArray.push([td.innerText, null]);
                     }
-                });
-                if(integer != 0){
-                    const tmpData = tmpArray[0];
-                    tmpArray[0] = tmpArray[integer];
-                    tmpArray[integer] = tmpData;
-                }
+                })
+                const tmpData = tmpArray[0];
+                tmpArray[0] = tmpArray[integer];
+                tmpArray[integer] = tmpData;
                 array.push(tmpArray);
             });
-            console.log(array);
             //Sorts the data in the array
             switch (order){
                 case 'asc':
@@ -239,25 +235,20 @@ function header_clicked(string, integer){
             }
             //Rearrange the array to the default arrangement
             let sortedArray = [];
-            if(body.first().find('td').length > 1){
-                array.forEach(function(element){
-                    const tmpData = element[integer];
-                    tmpData[integer] = element[0];
-                    element[0] = tmpData;
-                    sortedArray.push(element);
-                });
-            } else {
-                sortedArray = array;
-            }
-            //Adds the data back to the table
+            array.forEach(function(element){
+                const tmpData = element[integer];
+                element[integer] = element[0];
+                element[0] = tmpData;
+                sortedArray.push(element);
+            });
+            //Add the data back to the table
             const tbody = $(`#${string}_tbody`)[0];
             tbody.innerHTML = '';
             sortedArray.forEach(function(element){
                 let row = '<tr>';
                 for(let i = 0; i < element.length; i++){
                     switch (element[i][1]){
-                        case 'dtval':
-                            console.log(element[i]);
+                        case 'date':
                             const dateOrig = element[i][0];
                             element[i][0] = new Date(element[i][0] * 1000);
                             row += `<td dtval='${dateOrig}'>${String(element[i][0].getDate()).padStart(2, '0')}/${String(element[i][0].getMonth() + 1).padStart(2, '0')}/${element[i][0].getFullYear()} ${String(element[i][0].getHours()).padStart(2, '0')}:${String(element[i][0].getMinutes()).padStart(2, '0')}:${String(element[i][0].getSeconds()).padStart(2, '0')}</td>`;
