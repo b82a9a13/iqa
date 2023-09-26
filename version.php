@@ -1,13 +1,12 @@
 <?php
-// This file is part of the IQA Plugin
 /**
- * @package     local_iqa
+ * @package     block_iqa
  * @author      Robert Tyrone Cullen
  * @var stdClass $plugin
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_iqa';
-$plugin->version = 7;
+$plugin->component = 'block_iqa';
+$plugin->version = 4;
 $plugin->requires = 2016052314; // Moodle version

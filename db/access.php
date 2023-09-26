@@ -1,6 +1,23 @@
 <?php
 $capabilities = [
-    'local/iqa:coach' => [
+    'block/iqa:myaddinstance' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => [
+            'user' => CAP_ALLOW
+        ],
+        'clonepermissionsfrom' => 'moodle/my:manageblocks'
+    ],
+    'block/iqa:addinstance' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => [
+            'manager' => CAP_ALLOW
+        ],
+        'clonepermissionsfrom' => 'moodle/site:manageblocks'
+    ],
+    'block/iqa:coach' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -9,7 +26,7 @@ $capabilities = [
             'editingteacher' => CAP_ALLOW
         ]
     ],
-    'local/iqa:learner' => [
+    'block/iqa:learner' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -17,7 +34,7 @@ $capabilities = [
             'student' => CAP_ALLOW
         ]
     ],
-    'local/iqa:admin' => [
+    'block/iqa:admin' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

@@ -1,7 +1,7 @@
 <?php
 /**
 * 
-* @package     local_iqa
+* @package     block_iqa
 * @author      Robert Tyrone Cullen
 */
 
