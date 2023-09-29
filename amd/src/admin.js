@@ -1,24 +1,24 @@
-function view_div(string){
+function view_div(string, type){
     const stringArray = ['assign', 'remove', 'view', 'logs'];
-    if(stringArray.includes(string)){
+    if(stringArray.includes(string) && (type == 'iqa' || type == 'course')){
         stringArray.forEach((item)=>{
             if(item != string){
-                if($(`#${item}_iqa_div`)[0].style.display == 'block'){
-                    $(`#${item}_iqa_div`)[0].style.display = 'none';
+                if($(`#${item}_${type}_div`)[0].style.display == 'block'){
+                    $(`#${item}_${type}_div`)[0].style.display = 'none';
                 }
             }
         });
     }
 }
 //function used to render a form and to handle the form submission
-function select_form(string){
-    if(string == 'assign' || string == 'remove'){
-        const div = $(`#${string}_iqa_div`)[0];
-        const error = $(`#${string}_error`)[0];
-        const success = $(`#${string}_success`)[0];
-        const choose = $(`#${string}_au`)[0];
-        $(`#${string}_iqa_btn`)[0].addEventListener('click', ()=>{
-            view_div(string);
+function select_form(string, type){
+    if((string == 'assign' || string == 'remove') && (type == 'iqa' || type == 'course')){
+        const div = $(`#${string}_${type}_div`)[0];
+        const error = $(`#${string}_${type}_error`)[0];
+        const success = $(`#${string}_${type}_success`)[0];
+        const choose = $(`#${string}_${type}_au`)[0];
+        $(`#${string}_${type}_btn`)[0].addEventListener('click', ()=>{
+            view_div(string, type);
             if(div.style.display == 'block'){
                 div.style.display = 'none';
             } else if(div.style.display == 'none'){
@@ -26,7 +26,7 @@ function select_form(string){
                 error.style.display = 'none';
                 success.style.display = 'none';
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', `./classes/inc/admin_${string}_iqa_render.inc.php`, false);
+                xhr.open('POST', `./classes/inc/admin_${string}_${type}_render.inc.php`, false);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onload = function(){
                     if(this.status == 200){
@@ -37,7 +37,7 @@ function select_form(string){
                         } else if(text['return']){
                             choose.innerHTML = text['return'];
                         } else {
-                            error.innerText = 'no users available';
+                            error.innerText = 'no data available';
                             error.style.display = 'block';
                         }
                     } else {
@@ -49,7 +49,7 @@ function select_form(string){
                 div.style.display = 'block';
             }
         });
-        $(`#${string}_iqa_form`)[0].addEventListener('submit', (e)=>{
+        $(`#${string}_${type}_form`)[0].addEventListener('submit', (e)=>{
             e.preventDefault();
             if(choose.value == ''){
                 error.innerText = 'No input provided';
@@ -58,7 +58,7 @@ function select_form(string){
                 error.style.display = 'none';
                 success.style.display = 'none';
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', `./classes/inc/admin_${string}_iqa.inc.php`, true);
+                xhr.open('POST', `./classes/inc/admin_${string}_${type}.inc.php`, true);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onload = function(){
                     if(this.status == 200){
@@ -68,8 +68,8 @@ function select_form(string){
                             error.style.display = 'block';
                         } else if(text['return']){
                             success.innerText = 'Success';
-                            $(`#${string}_au option[value='${choose.value}']`)[0].remove();
-                            $(`#${string}_au option[value='']`).prop('selected', true);
+                            $(`#${string}_${type}_au option[value='${choose.value}']`)[0].remove();
+                            $(`#${string}_${type}_au option[value='']`).prop('selected', true);
                             success.style.display = 'block';
                         } else {
                             error.innerText = 'Submit error';
@@ -85,23 +85,25 @@ function select_form(string){
         });
     }
 }
-select_form('assign');
-select_form('remove');
+select_form('assign', 'iqa');
+select_form('remove', 'iqa');
+select_form('assign', 'course');
+select_form('remove', 'course');
 //Function used to render data
-function view_data(string){
-    if(string == 'view' || string == 'logs'){
-        const div = $(`#${string}_iqa_div`)[0];
-        const error = $(`#${string}_error`)[0];
-        const content = $(`#${string}_iqa_content`)[0];
-        $(`#${string}_iqa_btn`)[0].addEventListener('click', ()=>{
-            view_div(string);
+function view_data(string, type){
+    if((string == 'view' || string == 'logs') && (type == 'iqa' || type == 'course')){
+        const div = $(`#${string}_${type}_div`)[0];
+        const error = $(`#${string}_${type}_error`)[0];
+        const content = $(`#${string}_${type}_content`)[0];
+        $(`#${string}_${type}_btn`)[0].addEventListener('click', ()=>{
+            view_div(string, type);
             if(div.style.display == 'block'){
                 div.style.display = 'none';
             } else if(div.style.display == 'none'){
                 error.style.display = 'none';
                 content.style.display = 'none';
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', `./classes/inc/admin_${string}_iqa_render.inc.php`, false);
+                xhr.open('POST', `./classes/inc/admin_${string}_${type}_render.inc.php`, false);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onload = function(){
                     if(this.status == 200){
@@ -123,7 +125,7 @@ function view_data(string){
                 }
                 switch (string){
                     case 'logs':
-                        xhr.send(`sd=${$('#startdate')[0].value}&ed=${$('#enddate')[0].value}`);
+                        xhr.send(`sd=${$(`#${type}_startdate`)[0].value}&ed=${$(`#${type}_enddate`)[0].value}`);
                         break;
                     default:
                         xhr.send();
@@ -133,8 +135,10 @@ function view_data(string){
         });
     }
 }
-view_data('view');
-view_data('logs');
+view_data('view', 'iqa');
+view_data('logs', 'iqa');
+view_data('view', 'course');
+view_data('logs', 'course');
 //Function is used to retrieve log data dependant on the form data
 $('#logs_iqa_filter_form')[0].addEventListener('submit', (e)=>{
     e.preventDefault();
@@ -163,12 +167,12 @@ $('#logs_iqa_filter_form')[0].addEventListener('submit', (e)=>{
             error.style.display = 'block';
         }
     }
-    xhr.send(`sd=${$('#startdate')[0].value}&ed=${$('#enddate')[0].value}`);
+    xhr.send(`sd=${$('#iqa_startdate')[0].value}&ed=${$('#iqa_enddate')[0].value}`);
 });
-function header_clicked(string, integer){
-    if(string == 'view' || string == 'logs'){
+function header_clicked(string, integer, type){
+    if((string == 'view' || string == 'logs') && (type == 'iqa' || type == 'course')){
         //set the headers of the table to contain the correct arrow showing how the table is sorted
-        const headers = $(`#${string}_thead`).find('tr:first th');
+        const headers = $(`#${string}_${type}_thead`).find('tr:first th');
         let order = 'asc';
         for(let i = 0; i < headers.length; i++){
             if(i === integer){
@@ -193,7 +197,7 @@ function header_clicked(string, integer){
             }
         }
         //Get all the table data and put it into a array, and only performs the task if there is data within the table to sort
-        const body = $(`#${string}_tbody`).find('tr');
+        const body = $(`#${string}_${type}_tbody`).find('tr');
         if(body.length > 1){
             let array = [];
             body.each(function(index, row){
@@ -242,7 +246,7 @@ function header_clicked(string, integer){
                 sortedArray.push(element);
             });
             //Add the data back to the table
-            const tbody = $(`#${string}_tbody`)[0];
+            const tbody = $(`#${string}_${type}_tbody`)[0];
             tbody.innerHTML = '';
             sortedArray.forEach(function(element){
                 let row = '<tr>';

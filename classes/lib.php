@@ -8,9 +8,23 @@ namespace local_iqa;
 use stdClass;
 
 class lib{
+
+    //Get the current user id
     private function get_current_userid(): int{
         global $USER;
         return $USER->id;
+    }
+
+    //Check if a user exists
+    private function check_user_exists($id): bool{
+        global $DB;
+        return $DB->record_exists('user', [$DB->sql_compare_text('id') => $id]);
+    }
+
+    //Check if a course exists
+    private function check_course_exists($id): bool{
+        global $DB;
+        return $DB->record_exists('course', [$DB->sql_compare_text('id') => $id]);
     }
 
     //Function is used to get all users which can be assigned as iqa
@@ -39,18 +53,22 @@ class lib{
     //Function is used to assign a user as iqa
     public function create_iqa($id): bool{
         global $DB;
-        $record = new stdClass();
-        $record->iqaid = $id;
-        if($DB->record_exists('iqa_assignment', [$DB->sql_compare_text('iqaid') => $id])){
-            return false;
-        } elseif($DB->insert_record('iqa_assignment', $record) === false){
-            return false;
+        if($this->check_user_exists($id)){
+            $record = new stdClass();
+            $record->iqaid = $id;
+            if($DB->record_exists('iqa_assignment', [$DB->sql_compare_text('iqaid') => $id])){
+                return false;
+            } elseif($DB->insert_record('iqa_assignment', $record) === false){
+                return false;
+            } else {
+                $record->userid = $this->get_current_userid();
+                $record->time = time();
+                $record->type = 'Added';
+                $DB->insert_record('iqa_assignment_log', $record);
+                return true;
+            }
         } else {
-            $record->userid = $this->get_current_userid();
-            $record->time = time();
-            $record->type = 'Added';
-            $DB->insert_record('iqa_assignment_log', $record);
-            return true;
+            return false;
         }
     }
 
@@ -100,5 +118,37 @@ class lib{
             array_push($array, [$record->time, $record->type, $record->userid, $record->ufirstname.' '.$record->ulastname, $record->iqaid, $record->uafirstname.' '.$record->ualastname]);
         }
         return $array;
+    }
+
+    //Get all courses that aren't already in the iqa_course table
+    public function get_non_iqa_courses(): array{
+        global $DB;
+        $records = $DB->get_records_sql('SELECT id, fullname FROM {course} WHERE id != 1');
+        $array = [];
+        foreach($records as $record){
+            if(!$DB->record_exists('iqa_course', [$DB->sql_compare_text('courseid') => $record->id])){
+                array_push($array, [$record->fullname, $record->id]);
+            }
+        }
+        asort($array);
+        return $array;
+    }
+
+    //Create a record in iqa_course table
+    public function create_iqa_course($id): bool{
+        global $DB;
+        if($this->check_course_exists($id)){
+            $record = new stdClass();
+            $record->courseid = $id;
+            if($DB->record_exists('iqa_course', [$DB->sql_compare_text('courseid') => $id])){
+                return false;
+            } elseif($DB->insert_record('iqa_course', $record) === false){
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
 }

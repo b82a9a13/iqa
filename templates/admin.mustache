@@ -1,56 +1,117 @@
 <link rel="stylesheet" type="text/css" href="./classes/css/admin.css">
 <h1 class='text-center'>{{title}}</h1>
-<div class='text-center'>
-    <button class='btn btn-primary' id="assign_iqa_btn">{{assign}}</button>
-    <button class='btn btn-primary' id="view_iqa_btn">{{view}}</button>
-    <button class='btn btn-primary' id="remove_iqa_btn">{{remove}}</button>
-    <button class='btn btn-primary' id="logs_iqa_btn">{{logs}}</button>
-</div>
-<div id="assign_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
-    <h2>{{assign}}</h2>
-    <form id="assign_iqa_form">
-        <div class='center-div-content'>
-            <div>
-                <h4>{{user}}</h4>
-                <select id="assign_au" required></select>
-            </div>
+<div class='center-div-content'>
+    <div class='section-border'>
+        <h2 class='text-center'>User</h2>
+        <div class='text-center'>
+            <button class='btn btn-primary' id="assign_iqa_btn">{{assign}}</button>
+            <button class='btn btn-primary' id="view_iqa_btn">{{view}}</button>
+            <button class='btn btn-primary' id="remove_iqa_btn">{{remove}}</button>
+            <button class='btn btn-primary' id="logs_iqa_btn">{{logs}}</button>
         </div>
-        <h4 class='text-success' id="assign_success" style='display:none;'></h4>
-        <h4 class='text-danger' id="assign_error" style='display:none;'></h4>
-        <button class='btn btn-primary mt-1' type="submit" id="assign_iqa_submit">{{submit}}</button>
-    </form>
-</div>
-<div id="view_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
-    <h2>{{view}}</h2>
-    <div id="view_iqa_content" class='center-div-content'></div>
-    <h4 class='text-danger' id="view_error" style='display:none;'></h4>
-</div>
-<div id="remove_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
-    <h2>{{remove}}</h2>
-    <form id="remove_iqa_form">
-        <div class='center-div-content'>
-            <div>
-                <h4>{{user}}</h4>
-                <select id="remove_au" required></select>
-            </div>
+        <div id="assign_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{assign}}</h2>
+            <form id="assign_iqa_form">
+                <div class='center-div-content'>
+                    <div>
+                        <h4>{{user}}</h4>
+                        <select id="assign_iqa_au" required></select>
+                    </div>
+                </div>
+                <h4 class='text-success' id="assign_iqa_success" style='display:none;'></h4>
+                <h4 class='text-danger' id="assign_iqa_error" style='display:none;'></h4>
+                <button class='btn btn-primary mt-1' type="submit" id="assign_iqa_submit">{{submit}}</button>
+            </form>
         </div>
-        <h4 class='text-success' id="remove_success" style='display:none;'></h4>
-        <h4 class='text-danger' id="remove_error" style='display:none;'></h4>
-        <button class='btn btn-primary mt-1' type="submit" id="remove_iqa_submit">{{submit}}</button>
-    </form>
-</div>
-<div id="logs_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
-    <h2>{{logs}}</h2>
-    <form id="logs_iqa_filter_form">
-    <div class='d-flex center-div-content'>
-        <p class='mr-2 ml-2 pt-2'>Start Date: </p>
-        <input type="date" id="startdate" value="{{oneweekago}}">
-        <p class='mr-2 ml-2 pt-2'>End Date: </p>
-        <input type="date" id="enddate" value="{{currentdate}}">
-        <button class='btn btn-primary ml-1' type='submit'>Filter</button>
+        <div id="view_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{view}}</h2>
+            <div id="view_iqa_content" class='center-div-content'></div>
+            <h4 class='text-danger' id="view_iqa_error" style='display:none;'></h4>
+        </div>
+        <div id="remove_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{remove}}</h2>
+            <form id="remove_iqa_form">
+                <div class='center-div-content'>
+                    <div>
+                        <h4>{{user}}</h4>
+                        <select id="remove_iqa_au" required></select>
+                    </div>
+                </div>
+                <h4 class='text-success' id="remove_iqa_success" style='display:none;'></h4>
+                <h4 class='text-danger' id="remove_iqa_error" style='display:none;'></h4>
+                <button class='btn btn-primary mt-1' type="submit" id="remove_iqa_submit">{{submit}}</button>
+            </form>
+        </div>
+        <div id="logs_iqa_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{logs}}</h2>
+            <form id="logs_iqa_filter_form">
+                <div class='d-flex center-div-content'>
+                    <p class='mr-2 ml-2 pt-2'>Start Date: </p>
+                    <input type="date" id="iqa_startdate" value="{{oneweekago}}">
+                    <p class='mr-2 ml-2 pt-2'>End Date: </p>
+                    <input type="date" id="iqa_enddate" value="{{currentdate}}">
+                    <button class='btn btn-primary ml-1' type='submit'>Filter</button>
+                </div>
+            </form>
+            <div id="logs_iqa_content" class='center-div-content'></div>
+            <h4 class='text-danger' id="logs_iqa_error" style='display:none;'></h4>
+        </div>
     </div>
-    </form>
-    <div id="logs_iqa_content" class='center-div-content'></div>
-    <h4 class='text-danger' id="logs_error" style='display:none;'></h4>
+    <div class='section-border'>
+        <h2 class='text-center'>Course</h2>
+        <div class='text-center'>
+            <button class='btn btn-primary' id="assign_course_btn">{{assign}}</button>
+            <button class='btn btn-primary' id="view_course_btn">{{view}}</button>
+            <button class='btn btn-primary' id="remove_course_btn">{{remove}}</button>
+            <button class='btn btn-primary' id="logs_course_btn">{{logs}}</button>
+        </div>
+        <div id="assign_course_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{assign}}</h2>
+            <form id="assign_course_form">
+                <div class='center-div-content'>
+                    <div>
+                        <h4>Course</h4>
+                        <select id="assign_course_au" required></select>
+                    </div>
+                </div>
+                <h4 class='text-success' id="assign_course_success" style='display:none;'></h4>
+                <h4 class='text-danger' id="assign_course_error" style='display:none;'></h4>
+                <button class='btn btn-primary mt-1' type="submit" id="assign_course_submit">{{submit}}</button>
+            </form>
+        </div>
+        <div id="view_course_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{view}}</h2>
+            <div id="view_course_content" class='center-div-content'></div>
+            <h4 class='text-danger' id="view_course_error" style='display:none;'></h4>
+        </div>
+        <div id="remove_course_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{remove}}</h2>
+            <form id="remove_course_form">
+                <div class='center-div-content'>
+                    <div>
+                        <h4>Course</h4>
+                        <select id="remove_course_au" required></select>
+                    </div>
+                </div>
+                <h4 class='text-success' id="remove_course_success" style='display:none;'></h4>
+                <h4 class='text-danger' id="remove_course_error" style='display:none;'></h4>
+                <button class='btn btn-primary mt-1' type="submit" id="remove_course_submit">{{submit}}</button>
+            </form>
+        </div>
+        <div id="logs_course_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{logs}}</h2>
+            <form id="logs_course_filter_form">
+                <div class='d-flex center-div-content'>
+                    <p class='mr-2 ml-2 pt-2'>Start Date: </p>
+                    <input type="date" id="course_startdate" value="{{oneweekago}}">
+                    <p class='mr-2 ml-2 pt-2'>End Date: </p>
+                    <input type="date" id="course_enddate" value="{{currentdate}}">
+                    <button class='btn btn-primary ml-1' type='submit'>Filter</button>
+                </div>
+            </form>
+            <div id="logs_course_content" class='center-div-content'></div>
+            <h4 class='text-danger' id="logs_course_error" style='display:none;'></h4>
+        </div>
+    </div>
 </div>
-<script defer src='./amd/min/admin.min.js'></script>
+<script defer src='./amd/src/admin.js'></script>

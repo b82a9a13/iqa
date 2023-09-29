@@ -28,15 +28,15 @@ if(!isset($_SESSION['iqa_admin'])){
             $array = $lib->get_assign_logs($sd, $ed);
             if(!empty($array)){
                 $returnText->return = "<table class='table table-bordered table-striped table-hover'>
-                    <thead id='logs_thead'>
+                    <thead id='logs_iqa_thead'>
                         <tr>
-                            <th class='c-pointer' onclick='header_clicked(`logs`, 0)' sort='asc'>Date & Time <span>&uarr;</span></th>
-                            <th class='c-pointer' onclick='header_clicked(`logs`, 1)' sort>Action <span></span></th>
-                            <th class='c-pointer' onclick='header_clicked(`logs`, 2)' sort>Affected User <span></span></th>
-                            <th class='c-pointer' onclick='header_clicked(`logs`, 3)' sort>User <span></span></th>
+                            <th class='c-pointer' onclick='header_clicked(`logs`, 0, `iqa`)' sort='asc'>Date & Time <span>&uarr;</span></th>
+                            <th class='c-pointer' onclick='header_clicked(`logs`, 1, `iqa`)' sort>Action <span></span></th>
+                            <th class='c-pointer' onclick='header_clicked(`logs`, 2, `iqa`)' sort>Affected User <span></span></th>
+                            <th class='c-pointer' onclick='header_clicked(`logs`, 3, `iqa`)' sort>User <span></span></th>
                         </tr>
                     </thead>
-                    <tbody id='logs_tbody'>
+                    <tbody id='logs_iqa_tbody'>
                 ";
                 foreach($array as $arra){
                     $returnText->return .= "
