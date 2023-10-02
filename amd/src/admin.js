@@ -22,11 +22,18 @@ function select_form(string, type){
             if(div.style.display == 'block'){
                 div.style.display = 'none';
             } else if(div.style.display == 'none'){
-                choose.innerHTML = "<option disabled value='' selected>Choose a User</option>";
+                switch(type){
+                    case 'iqa':
+                        choose.innerHTML = `<option disabled value='' selected>Choose a User</option>`;
+                        break;
+                    case 'course':
+                        choose.innerHTML = `<option disabled value='' selected>Choose a Course</option>`;
+                        break;
+                }
                 error.style.display = 'none';
                 success.style.display = 'none';
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', `./classes/inc/admin_${string}_${type}_render.inc.php`, false);
+                xhr.open('POST', `./classes/inc/admin_${string}_render.inc.php`, false);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onload = function(){
                     if(this.status == 200){
@@ -45,7 +52,7 @@ function select_form(string, type){
                         error.style.display = 'block';
                     }
                 }
-                xhr.send();
+                xhr.send(`t=${type}`);
                 div.style.display = 'block';
             }
         });
@@ -58,7 +65,7 @@ function select_form(string, type){
                 error.style.display = 'none';
                 success.style.display = 'none';
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', `./classes/inc/admin_${string}_${type}.inc.php`, true);
+                xhr.open('POST', `./classes/inc/admin_${string}.inc.php`, true);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onload = function(){
                     if(this.status == 200){
@@ -80,7 +87,7 @@ function select_form(string, type){
                         error.style.display = 'block';
                     }
                 }
-                xhr.send(`id=${choose.value}`);
+                xhr.send(`id=${choose.value}&t=${type}`);
             }
         });
     }
@@ -103,7 +110,7 @@ function view_data(string, type){
                 error.style.display = 'none';
                 content.style.display = 'none';
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', `./classes/inc/admin_${string}_${type}_render.inc.php`, false);
+                xhr.open('POST', `./classes/inc/admin_${string}_render.inc.php`, false);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onload = function(){
                     if(this.status == 200){
@@ -125,10 +132,10 @@ function view_data(string, type){
                 }
                 switch (string){
                     case 'logs':
-                        xhr.send(`sd=${$(`#${type}_startdate`)[0].value}&ed=${$(`#${type}_enddate`)[0].value}`);
+                        xhr.send(`sd=${$(`#${type}_startdate`)[0].value}&ed=${$(`#${type}_enddate`)[0].value}&t=${type}`);
                         break;
                     default:
-                        xhr.send();
+                        xhr.send(`t=${type}`);
                 }
                 div.style.display = 'block';
             }
@@ -140,35 +147,37 @@ view_data('logs', 'iqa');
 view_data('view', 'course');
 view_data('logs', 'course');
 //Function is used to retrieve log data dependant on the form data
-$('#logs_iqa_filter_form')[0].addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const error = $('#logs_error')[0];
-    const content = $(`#logs_iqa_content`)[0];
-    content.style.display = 'none';
-    error.style.display = 'none';
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', './classes/inc/admin_logs_iqa_render.inc.php', false);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = function(){
-        if(this.status == 200){
-            const text = JSON.parse(this.responseText);
-            if(text['error']){
-                error.innerText = text['error'];
-                error.style.display = 'block';
-            } else if(text['return']){
-                content.innerHTML = text['return'];
-                content.style.display = 'block';
+['iqa', 'course'].forEach(function(type){
+    $(`#logs_${type}_filter_form`)[0].addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const error = $(`#logs_${type}_error`)[0];
+        const content = $(`#logs_${type}_content`)[0];
+        content.style.display = 'none';
+        error.style.display = 'none';
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `./classes/inc/admin_logs_render.inc.php`, false);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function(){
+            if(this.status == 200){
+                const text = JSON.parse(this.responseText);
+                if(text['error']){
+                    error.innerText = text['error'];
+                    error.style.display = 'block';
+                } else if(text['return']){
+                    content.innerHTML = text['return'];
+                    content.style.display = 'block';
+                } else {
+                    error.innerText = 'No data available';
+                    error.style.display = 'block';
+                }
             } else {
-                error.innerText = 'No data available';
+                error.innerText = 'Connection error';
                 error.style.display = 'block';
             }
-        } else {
-            error.innerText = 'Connection error';
-            error.style.display = 'block';
         }
-    }
-    xhr.send(`sd=${$('#iqa_startdate')[0].value}&ed=${$('#iqa_enddate')[0].value}`);
-});
+        xhr.send(`sd=${$(`#${type}_startdate`)[0].value}&ed=${$(`#${type}_enddate`)[0].value}&t=${type}`);
+    });
+})
 function header_clicked(string, integer, type){
     if((string == 'view' || string == 'logs') && (type == 'iqa' || type == 'course')){
         //set the headers of the table to contain the correct arrow showing how the table is sorted

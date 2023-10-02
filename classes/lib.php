@@ -64,6 +64,7 @@ class lib{
                 $record->userid = $this->get_current_userid();
                 $record->time = time();
                 $record->type = 'Added';
+                $record->option = 'User';
                 $DB->insert_record('iqa_assignment_log', $record);
                 return true;
             }
@@ -79,10 +80,12 @@ class lib{
             LEFT JOIN {user} u ON u.id = i.iqaid
         ');
         $array = [];
-        foreach($records as $record){
-            array_push($array, [$record->firstname.' '.$record->lastname, $record->userid]);
+        if(count($records) > 0){
+            foreach($records as $record){
+                array_push($array, [$record->firstname.' '.$record->lastname, $record->userid]);
+            }
+            asort($array);
         }
-        asort($array);
         return $array;
     }
 
@@ -97,6 +100,7 @@ class lib{
                 $record->userid = $this->get_current_userid();
                 $record->time = time();
                 $record->type = 'Removed';
+                $record->option = 'User';
                 $record->iqaid = $id;
                 $DB->insert_record('iqa_assignment_log', $record);
                 return true;
@@ -107,15 +111,17 @@ class lib{
     }
 
     //Function is used to get all the assignment logs
-    public function get_assign_logs($startdate, $enddate): array{
+    public function get_iqa_assign_logs($startdate, $enddate): array{
         global $DB;
         $records = $DB->get_records_sql('SELECT i.id as id, i.userid as userid, u.firstname as ufirstname, u.lastname as ulastname, i.iqaid as iqaid, ua.firstname as uafirstname, ua.lastname as ualastname, i.type as type, i.time as time FROM {iqa_assignment_log} i
             LEFT JOIN {user} u ON u.id = i.userid
             LEFT JOIN {user} ua ON ua.id = i.iqaid
-            WHERE i.time >= ? AND i.time <= ?',[$startdate, $enddate]);
+            WHERE i.time >= ? AND i.time <= ? AND i.option = "User"',[$startdate, $enddate]);
         $array = [];
-        foreach($records as $record){
-            array_push($array, [$record->time, $record->type, $record->userid, $record->ufirstname.' '.$record->ulastname, $record->iqaid, $record->uafirstname.' '.$record->ualastname]);
+        if(count($records) > 0){
+            foreach($records as $record){
+                array_push($array, [$record->time, $record->type, $record->userid, $record->ufirstname.' '.$record->ulastname, $record->iqaid, $record->uafirstname.' '.$record->ualastname]);
+            }
         }
         return $array;
     }
@@ -145,10 +151,68 @@ class lib{
             } elseif($DB->insert_record('iqa_course', $record) === false){
                 return false;
             } else {
+                $record->userid = $this->get_current_userid();
+                $record->time = time();
+                $record->type = 'Added';
+                $record->option = 'Course';
+                $DB->insert_record('iqa_assignment_log', $record);
                 return true;
             }
         } else {
             return false;
         }
+    }
+
+    //Get all courses assigned as needing iqa
+    public function get_iqa_courses(): array{
+        global $DB;
+        $records = $DB->get_records_sql('SELECT ic.id as id, ic.courseid as courseid, c.fullname as fullname FROM {iqa_course} ic 
+            LEFT JOIN {course} c ON c.id = ic.courseid'
+        );
+        $array = [];
+        if(count($records) > 0){
+            foreach($records as $record){
+                array_push($array, [$record->fullname, $record->courseid]);
+            }
+            asort($array);
+        }
+        return $array;
+    }
+
+    //Remove a specific course from the iqa course database
+    public function remove_iqa_course($id): bool{
+        global $DB;
+        if(!$DB->record_exists('iqa_course', [$DB->sql_compare_text('courseid') => $id])){
+            return false;
+        } else {
+            if($DB->delete_records('iqa_course', [$DB->sql_compare_text('courseid') => $id]) > 0){
+                $record = new stdClass();
+                $record->userid = $this->get_current_userid();
+                $record->time = time();
+                $record->type = 'Removed';
+                $record->option = 'Course';
+                $record->courseid = $id;
+                $DB->insert_record('iqa_assignment_log', $record);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    //Get course assignment logs
+    public function get_course_assign_logs($startdate, $enddate): array{
+        global $DB;
+        $records = $DB->get_records_sql('SELECT i.id as id, i.userid as userid, i.courseid as courseid, i.type as type, i.time as time, c.fullname as fullname, u.firstname as firstname, u.lastname as lastname FROM {iqa_assignment_log} i 
+            LEFT JOIN {course} c ON c.id = i.courseid
+            LEFT JOIN {user} u ON u.id = i.userid
+        WHERE i.time >= ? AND i.time <= ? AND i.option = "Course"',[$startdate, $enddate]);
+        $array = [];
+        if(count($records) > 0){
+            foreach($records as $record){
+                array_push($array, [$record->time, $record->type, $record->userid, $record->firstname.' '.$record->lastname, $record->courseid, $record->fullname]);
+            }
+        }
+        return $array;
     }
 }

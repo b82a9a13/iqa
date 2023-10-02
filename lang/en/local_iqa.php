@@ -21,6 +21,8 @@
     $string['invalid_ip'] = 'Invalid id provided';
     $string['invalid_sdp'] = 'Invalid start date provided';
     $string['invalid_edp'] = 'Invalid end date provided';
+    $string['invalid_dp'] = 'Invalid dates provided';
+    $string['invalid_tp'] = 'Invalid type provided';
 //J
 //L
 //M
@@ -28,6 +30,7 @@
     $string['missing_iv'] = 'Missing id value';
     $string['missing_sdv'] = 'Missing start date value';
     $string['missing_edv'] = 'Missing end date value';
+    $string['missing_tv'] = 'Missing type value';
 //N
 //O
 //P
