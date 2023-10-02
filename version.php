@@ -9,5 +9,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_iqa';
-$plugin->version = 9;
+$plugin->version = 10;
 $plugin->requires = 2016052314; // Moodle version

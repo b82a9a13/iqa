@@ -29,6 +29,11 @@ $template = (Object)[
     'view' => get_string('view', $p),
     'remove' => get_string('remove', $p),
     'logs' => get_string('logs', $p),
+    'start_date' => get_string('start_date', $p),
+    'end_date' => get_string('end_date', $p),
+    'filter' => get_string('filter', $p),
+    'user' => get_string('user', $p),
+    'course' => get_string('course', $p),
     'oneweekago' => date('Y-m-d',strtotime('-1 week', time())),
     'currentdate' => date('Y-m-d', strtotime('+1 day',time()))
 ];
@@ -36,3 +41,4 @@ echo $OUTPUT->render_from_template('local_iqa/admin', $template);
 
 echo $OUTPUT->footer();
 $_SESSION['iqa_admin'] = true;
+\local_iqa\event\viewed_admin::create(array('context' => $context))->trigger();

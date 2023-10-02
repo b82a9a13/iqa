@@ -10,9 +10,12 @@
     $string['assign'] = 'Assign';
 //B
 //C
+    $string['course'] = 'Course';
 //D
 //E
+    $string['end_date'] = 'End Date';
 //F
+    $string['filter'] = 'Filter';
 //G
 //H
 //I
@@ -40,8 +43,10 @@
     $string['remove'] = 'Remove';
 //S
     $string['submit'] = 'Submit';
+    $string['start_date'] = 'Start Date';
 //T
 //U
+    $string['user'] = 'User';
 //V
     $string['view'] = 'View';
 //W

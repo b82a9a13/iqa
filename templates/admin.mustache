@@ -2,7 +2,7 @@
 <h1 class='text-center'>{{title}}</h1>
 <div class='center-div-content'>
     <div class='section-border'>
-        <h2 class='text-center'>User</h2>
+        <h2 class='text-center'>{{user}}</h2>
         <div class='text-center'>
             <button class='btn btn-primary' id="assign_iqa_btn">{{assign}}</button>
             <button class='btn btn-primary' id="view_iqa_btn">{{view}}</button>
@@ -32,7 +32,6 @@
             <form id="remove_iqa_form">
                 <div class='center-div-content'>
                     <div>
-                        <h4>{{user}}</h4>
                         <select id="remove_iqa_au" required></select>
                     </div>
                 </div>
@@ -45,11 +44,11 @@
             <h2>{{logs}}</h2>
             <form id="logs_iqa_filter_form">
                 <div class='d-flex center-div-content'>
-                    <p class='mr-2 ml-2 pt-2'>Start Date: </p>
+                    <p class='mr-2 ml-2 pt-2'>{{start_date}}: </p>
                     <input type="date" id="iqa_startdate" value="{{oneweekago}}">
-                    <p class='mr-2 ml-2 pt-2'>End Date: </p>
+                    <p class='mr-2 ml-2 pt-2'>{{end_date}}: </p>
                     <input type="date" id="iqa_enddate" value="{{currentdate}}">
-                    <button class='btn btn-primary ml-1' type='submit'>Filter</button>
+                    <button class='btn btn-primary ml-1' type='submit'>{{filter}}</button>
                 </div>
             </form>
             <div id="logs_iqa_content" class='center-div-content'></div>
@@ -57,7 +56,7 @@
         </div>
     </div>
     <div class='section-border'>
-        <h2 class='text-center'>Course</h2>
+        <h2 class='text-center'>{{course}}</h2>
         <div class='text-center'>
             <button class='btn btn-primary' id="assign_course_btn">{{assign}}</button>
             <button class='btn btn-primary' id="view_course_btn">{{view}}</button>
@@ -87,7 +86,6 @@
             <form id="remove_course_form">
                 <div class='center-div-content'>
                     <div>
-                        <h4>Course</h4>
                         <select id="remove_course_au" required></select>
                     </div>
                 </div>
@@ -100,11 +98,11 @@
             <h2>{{logs}}</h2>
             <form id="logs_course_filter_form">
                 <div class='d-flex center-div-content'>
-                    <p class='mr-2 ml-2 pt-2'>Start Date: </p>
+                    <p class='mr-2 ml-2 pt-2'>{{start_date}}: </p>
                     <input type="date" id="course_startdate" value="{{oneweekago}}">
-                    <p class='mr-2 ml-2 pt-2'>End Date: </p>
+                    <p class='mr-2 ml-2 pt-2'>{{end_date}}: </p>
                     <input type="date" id="course_enddate" value="{{currentdate}}">
-                    <button class='btn btn-primary ml-1' type='submit'>Filter</button>
+                    <button class='btn btn-primary ml-1' type='submit'>{{filter}}</button>
                 </div>
             </form>
             <div id="logs_course_content" class='center-div-content'></div>
@@ -112,4 +110,4 @@
         </div>
     </div>
 </div>
-<script defer src='./amd/src/admin.js'></script>
+<script defer src='./amd/min/admin.min.js'></script>
