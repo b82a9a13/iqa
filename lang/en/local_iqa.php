@@ -26,14 +26,19 @@
     $string['invalid_edp'] = 'Invalid end date provided';
     $string['invalid_dp'] = 'Invalid dates provided';
     $string['invalid_tp'] = 'Invalid type provided';
+    $string['invalid_lp'] = 'Invalid learner provided';
+    $string['invalid_iqap'] = 'Invalid iqa provided';
 //J
 //L
+    $string['learner'] = 'Learner';
 //M
     $string['missing_rv'] = 'Missing required value';
     $string['missing_iv'] = 'Missing id value';
     $string['missing_sdv'] = 'Missing start date value';
     $string['missing_edv'] = 'Missing end date value';
     $string['missing_tv'] = 'Missing type value';
+    $string['missing_lv'] = 'Missing learner value';
+    $string['missing_iqav'] = 'Missing iqa value';
 //N
 //O
 //P

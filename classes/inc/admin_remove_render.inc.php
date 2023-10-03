@@ -15,7 +15,7 @@ if(!isset($_SESSION['iqa_admin'])){
         $returnText->error = get_string('missing_tv', $p);
     } else {
         $type = $_POST['t'];
-        if(!in_array($type, ['course', 'iqa'])){
+        if(!in_array($type, ['course', 'iqa', 'learner'])){
             $returnText->error = get_string('invalid_tp', $p);
         } else {
             $array = [];
@@ -29,13 +29,30 @@ if(!isset($_SESSION['iqa_admin'])){
                     $array = $lib->get_iqa();
                     $string = 'User';
                     break;
+                case 'learner':
+                    $array = $lib->get_iqa_learner();
+                    break;
             }
             if(!empty($array)){
-                $returnText->return = "<option disabled value='' selected>Choose a $string</option>";
-                foreach($array as $arra){
-                    $returnText->return .= "<option value='$arra[1]'>$arra[0]</option>";
+                switch($type){
+                    case 'learner':
+                        $returnText->return = "<select id='remove_".$type."_au' required><option disabled value='' selected>Choose a Assignment to remove</option>";
+                        foreach($array as $arra){
+                            $returnText->return .= "<option value='$arra[6]'>$arra[0] - $arra[2] - $arra[4]</option>";
+                        }
+                        $returnText->return .= '</select>';
+                        $returnText->return = str_replace("  ","",$returnText->return);
+                        break;
+                    default:
+                        $returnText->return = "<select id='remove_".$type."_au' required><option disabled value='' selected>Choose a $string</option>";
+                        foreach($array as $arra){
+                            $returnText->return .= "<option value='$arra[1]'>$arra[0]</option>";
+                        }
+                        $returnText->return .= '</select>';
+                        $returnText->return = str_replace("  ","",$returnText->return);
+                        break;
                 }
-                $returnText->return = str_replace("  ","",$returnText->return);
+
             }
         }
     }

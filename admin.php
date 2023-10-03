@@ -34,6 +34,7 @@ $template = (Object)[
     'filter' => get_string('filter', $p),
     'user' => get_string('user', $p),
     'course' => get_string('course', $p),
+    'learner' => get_string('learner', $p),
     'oneweekago' => date('Y-m-d',strtotime('-1 week', time())),
     'currentdate' => date('Y-m-d', strtotime('+1 day',time()))
 ];

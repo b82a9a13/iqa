@@ -13,7 +13,7 @@
             <h2>{{assign}}</h2>
             <form id="assign_iqa_form">
                 <div class='center-div-content'>
-                    <div>
+                    <div id="assign_iqa_content">
                         <select id="assign_iqa_au" required></select>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
             <h2>{{remove}}</h2>
             <form id="remove_iqa_form">
                 <div class='center-div-content'>
-                    <div>
+                    <div id="remove_iqa_content">
                         <select id="remove_iqa_au" required></select>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
             <h2>{{assign}}</h2>
             <form id="assign_course_form">
                 <div class='center-div-content'>
-                    <div>
+                    <div id="assign_course_content">
                         <select id="assign_course_au" required></select>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
             <h2>{{remove}}</h2>
             <form id="remove_course_form">
                 <div class='center-div-content'>
-                    <div>
+                    <div id="remove_course_content">
                         <select id="remove_course_au" required></select>
                     </div>
                 </div>
@@ -109,5 +109,59 @@
             <h4 class='text-danger' id="logs_course_error" style='display:none;'></h4>
         </div>
     </div>
+    <div class='section-border'>
+        <h2 class='text-center'>{{learner}}</h2>
+        <div class='text-center'>
+            <button class='btn btn-primary' id="assign_learner_btn">{{assign}}</button>
+            <button class='btn btn-primary' id="view_learner_btn">{{view}}</button>
+            <button class='btn btn-primary' id="remove_learner_btn">{{remove}}</button>
+            <button class='btn btn-primary' id="logs_learner_btn">{{logs}}</button>
+        </div>
+        <div id="assign_learner_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{assign}}</h2>
+            <form id="assign_learner_form">
+                <div class='center-div-content'>
+                    <div id="assign_learner_content" class='d-flex'>
+                        <select id="assign_learner_au" required></select>
+                    </div>
+                </div>
+                <h4 class='text-success' id="assign_learner_success" style='display:none;'></h4>
+                <h4 class='text-danger' id="assign_learner_error" style='display:none;'></h4>
+                <button class='btn btn-primary mt-1' type="submit" id="assign_learner_submit">{{submit}}</button>
+            </form>
+        </div>
+        <div id="view_learner_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{view}}</h2>
+            <div id="view_learner_content" class='center-div-content'></div>
+            <h4 class='text-danger' id="view_learner_error" style='display:none;'></h4>
+        </div>
+        <div id="remove_learner_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{remove}}</h2>
+            <form id="remove_learner_form">
+                <div class='center-div-content'>
+                    <div id="remove_learner_content" class='d-flex'>
+                        <select id="remove_learner_au" required></select>
+                    </div>
+                </div>
+                <h4 class='text-success' id="remove_learner_success" style='display:none;'></h4>
+                <h4 class='text-danger' id="remove_learner_error" style='display:none;'></h4>
+                <button class='btn btn-primary mt-1' type="submit" id="remove_learner_submit">{{submit}}</button>
+            </form>
+        </div>
+        <div id="logs_learner_div" style='display:none;' class='section-border mt-1 text-center'>
+            <h2>{{logs}}</h2>
+            <form id="logs_learner_filter_form">
+                <div class='d-flex center-div-content'>
+                    <p class='mr-2 ml-2 pt-2'>{{start_date}}: </p>
+                    <input type="date" id="learner_startdate" value="{{oneweekago}}">
+                    <p class='mr-2 ml-2 pt-2'>{{end_date}}: </p>
+                    <input type="date" id="learner_enddate" value="{{currentdate}}">
+                    <button class='btn btn-primary ml-1' type='submit'>{{filter}}</button>
+                </div>
+            </form>
+            <div id="logs_learner_content" class='center-div-content'></div>
+            <h4 class='text-danger' id="logs_learner_error" style='display:none;'></h4>
+        </div>
+    </div>
 </div>
-<script defer src='./amd/min/admin.min.js'></script>
+<script defer src='./amd/src/admin.js'></script>

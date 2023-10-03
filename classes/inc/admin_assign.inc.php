@@ -22,7 +22,7 @@ if(!isset($_SESSION['iqa_admin'])){
                 $returnText->error = get_string('missing_tv', $p);
             } else {
                 $type = $_POST['t'];
-                if(!in_array($type, ['course', 'iqa'])){
+                if(!in_array($type, ['course', 'iqa', 'learner'])){
                     $returnText->error = get_string('invalid_tp', $p);
                 } else {
                     switch($type){
@@ -31,6 +31,23 @@ if(!isset($_SESSION['iqa_admin'])){
                             break;
                         case 'iqa':
                             $returnText->return = $lib->create_iqa($id);
+                            break;
+                        case 'learner':
+                            if(!isset($_POST['l'])){
+                                $returnText->error = get_string('missing_lv', $p);
+                            } else if(!isset($_POST['i'])){
+                                $returnText->error = get_string('missing_iqav', $p);
+                            } else {
+                                $learner = $_POST['l'];
+                                $iqa = $_POST['i'];
+                                if(!preg_match("/^[0-9]*$/", $learner) || empty($learner)){
+                                    $returnText->error = get_string('invalid_lp', $p);
+                                } elseif(!preg_match("/^[0-9]*$/", $iqa) || empty($iqa)){
+                                    $returnText->error = get_string('invalid_iqap', $p);
+                                } else {
+                                    $returnText->return = $lib->create_iqa_learner($id, $learner, $iqa);
+                                }
+                            }
                             break;
                     }
                 }

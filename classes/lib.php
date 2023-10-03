@@ -215,4 +215,112 @@ class lib{
         }
         return $array;
     }
+
+    //Get all available learners which don't have iqa assigned to them
+    public function get_non_iqa_learners(): array{
+        global $DB;
+        $records = $DB->get_records_sql('SELECT ic.id as id, ic.courseid as courseid, c.fullname as fullname FROM {iqa_course} ic LEFT JOIN {course} c ON c.id = ic.courseid');
+        $array = [];
+        if(count($records) > 0){
+            foreach($records as $record){
+                $learners = $DB->get_records_sql('SELECT ra.id as id, eu.userid as userid, eu.firstname as firstname, eu.lastname as lastname FROM {course} c
+                    INNER JOIN {context} ctx ON c.id = ctx.instanceid
+                    INNER JOIN {role_assignments} ra ON ra.contextid = ctx.id AND ra.roleid = 5
+                    INNER JOIN (
+                        SELECT e.courseid, ue.userid, u.firstname, u.lastname FROM {enrol} e
+                        INNER JOIN {user_enrolments} ue ON ue.enrolid = e.id AND ue.status != 1
+                        INNER JOIN {user} u ON u.id = ue.userid
+                    ) eu ON c.id = eu.courseid AND ra.userid = eu.userid AND c.id = ?',
+                [$record->courseid]);
+                if(count($learners) > 0){
+                    array_push($array, [[$record->fullname, $record->courseid], []]);
+                    foreach($learners as $learner){
+                        if(!$DB->record_exists('iqa_learner', [$DB->sql_compare_text('learnerid') => $learner->userid, $DB->sql_compare_text('courseid') => $record->courseid])){
+                            array_push($array[count($array) - 1][1], [$learner->firstname.' '.$learner->lastname, $learner->userid]);
+                        }
+                    }
+                    asort($array[count($array)-1][1]);
+                }
+            }
+            $records = $DB->get_records_sql('SELECT ia.id as id, ia.iqaid as iqaid, u.firstname as firstname, u.lastname as lastname FROM {iqa_assignment} ia LEFT JOIN {user} u ON u.id = ia.iqaid');
+            array_push($array, ['iqa', []]);
+            foreach($records as $record){
+                array_push($array[count($array) - 1][1], [$record->firstname.' '.$record->lastname, $record->iqaid]);
+            }
+            asort($array[count($array)-1][1]);
+            asort($array);
+        }
+        return $array;
+    }
+
+    //Create a record in iqa_learner to store who is assigned as iqa to a specific learner and course
+    public function create_iqa_learner($id, $learner, $iqa): bool{
+        global $DB;
+        if(!$this->check_user_exists($learner) || 
+            !$this->check_user_exists($iqa) || 
+            !$this->check_course_exists($id) ||
+            !$DB->record_exists('iqa_course', [$DB->sql_compare_text('courseid') => $id]) ||
+            $DB->record_exists('iqa_learner', [$DB->sql_compare_text('courseid') => $id, $DB->sql_compare_text('learnerid') => $learner]) ||
+            !$DB->record_exists('iqa_assignment', [$DB->sql_compare_text('iqaid') => $iqa])
+            ){
+            return false;
+        } else {
+            $record = new stdClass();
+            $record->iqaid = $iqa;
+            $record->learnerid = $learner;
+            $record->courseid = $id;
+            if($DB->insert_record('iqa_learner', $record) === false){
+                return false;
+            } else {
+                $record->userid = $this->get_current_userid();
+                $record->time = time();
+                $record->type = 'Added';
+                $record->option = 'Learner';
+                $DB->insert_record('iqa_assignment_log', $record);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //Get all learners which have iqa assigned to them
+    public function get_iqa_learner(): array{
+        global $DB;
+        $records = $DB->get_records_sql('SELECT i.id as id, i.iqaid as iqaid, u.firstname as iqafirstname, u.lastname as iqalastname, i.learnerid as learnerid, uu.firstname as learnerfirstname, uu.lastname as learnerlastname, i.courseid as courseid, c.fullname as fullname FROM {iqa_learner} i
+            LEFT JOIN {user} u ON u.id = i.iqaid
+            LEFT JOIN {user} uu ON uu.id = i.learnerid
+            LEFT JOIN {course} c ON c.id = i.courseid
+        ');
+        $array = [];
+        foreach($records as $record){
+            array_push($array, [$record->learnerfirstname.' '.$record->learnerlastname, $record->learnerid, $record->fullname, $record->courseid, $record->iqafirstname.' '.$record->iqalastname, $record->iqaid, $record->id]);
+        }
+        asort($array);
+        return $array;
+    }
+
+    //Remove a specific record from the iqa_learner table
+    public function remove_iqa_learner($id): bool{
+        global $DB;
+        if(!$DB->record_exists('iqa_learner', [$DB->sql_compare_text('id') => $id])){
+            return false;
+        } else {
+            $record = $DB->get_record_sql('SELECT * FROM {iqa_learner} WHERE id = ?',[$id]);
+            if($DB->delete_records('iqa_learner', [$DB->sql_compare_text('id') => $id]) > 0){
+                $insert = new stdClass();
+                $insert->time = time();
+                $insert->userid = $this->get_current_userid();
+                $insert->type = 'Removed';
+                $insert->option = 'Learner';
+                $insert->iqaid = $record->iqaid;
+                $insert->learnerid = $record->learnerid;
+                $insert->courseid = $record->courseid;
+                $DB->insert_record('iqa_assignment_log', $insert);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
 }

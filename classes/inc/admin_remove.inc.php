@@ -22,7 +22,7 @@ if(!isset($_SESSION['iqa_admin'])){
                 $returnText->error = get_string('missing_tv', $p);
             } else {
                 $type = $_POST['t'];
-                if(!in_array($type, ['course', 'iqa'])){
+                if(!in_array($type, ['course', 'iqa', 'learner'])){
                     $returnText->error = get_string('invalid_tp', $p);
                 } else {
                     switch($type){
@@ -31,6 +31,9 @@ if(!isset($_SESSION['iqa_admin'])){
                             break;
                         case 'iqa':
                             $returnText->return = $lib->remove_iqa($id);
+                            break;
+                        case 'learner':
+                            $returnText->return = $lib->remove_iqa_learner($id);
                             break;
                     }
                 }

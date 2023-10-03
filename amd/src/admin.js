@@ -1,6 +1,6 @@
 function view_div(string, type){
     const stringArray = ['assign', 'remove', 'view', 'logs'];
-    if(stringArray.includes(string) && (type == 'iqa' || type == 'course')){
+    if(stringArray.includes(string) && (type == 'iqa' || type == 'course' || type == 'learner')){
         stringArray.forEach((item)=>{
             if(item != string){
                 if($(`#${item}_${type}_div`)[0].style.display == 'block'){
@@ -12,12 +12,13 @@ function view_div(string, type){
 }
 //function used to render a form and to handle the form submission
 function select_form(string, type){
-    if((string == 'assign' || string == 'remove') && (type == 'iqa' || type == 'course')){
+    if((string == 'assign' || string == 'remove') && (type == 'iqa' || type == 'course' || type == 'learner')){
         const div = $(`#${string}_${type}_div`)[0];
         const error = $(`#${string}_${type}_error`)[0];
         const success = $(`#${string}_${type}_success`)[0];
-        const choose = $(`#${string}_${type}_au`)[0];
+        const content = $(`#${string}_${type}_content`)[0];
         $(`#${string}_${type}_btn`)[0].addEventListener('click', ()=>{
+            const choose = $(`#${string}_${type}_au`)[0];
             view_div(string, type);
             if(div.style.display == 'block'){
                 div.style.display = 'none';
@@ -28,6 +29,16 @@ function select_form(string, type){
                         break;
                     case 'course':
                         choose.innerHTML = `<option disabled value='' selected>Choose a Course</option>`;
+                        break;
+                    case 'learner':
+                        switch(string){
+                            case 'remove':
+                                choose.innerHTML = `<option disabled value='' selected>Choose a Assignment to remove</option>`;
+                                break;
+                            case 'assign':
+                                choose.innerHTML = `<option disabled value='' selected>Choose a Course</option>`;
+                                break;
+                        }
                         break;
                 }
                 error.style.display = 'none';
@@ -42,7 +53,7 @@ function select_form(string, type){
                             error.innerText = text['error'];
                             error.style.display = 'block';
                         } else if(text['return']){
-                            choose.innerHTML = text['return'];
+                            content.innerHTML = text['return'];
                         } else {
                             error.innerText = 'no data available';
                             error.style.display = 'block';
@@ -58,6 +69,7 @@ function select_form(string, type){
         });
         $(`#${string}_${type}_form`)[0].addEventListener('submit', (e)=>{
             e.preventDefault();
+            const choose = $(`#${string}_${type}_au`)[0];
             if(choose.value == ''){
                 error.innerText = 'No input provided';
                 error.style.display = 'block';
@@ -75,8 +87,24 @@ function select_form(string, type){
                             error.style.display = 'block';
                         } else if(text['return']){
                             success.innerText = 'Success';
-                            $(`#${string}_${type}_au option[value='${choose.value}']`)[0].remove();
-                            $(`#${string}_${type}_au option[value='']`).prop('selected', true);
+                            switch(type){
+                                case 'learner':
+                                    switch(string){
+                                        case 'assign':
+                                            $(`#${string}_${type}_au2 option[value='${$(`#${string}_${type}_au2`)[0].value}']`)[0].remove();
+                                            $(`#${string}_${type}_au2 option[value='']`).prop('selected', true);
+                                            break;
+                                        case 'remove':
+                                            $(`#${string}_${type}_au option[value='${choose.value}']`)[0].remove();
+                                            $(`#${string}_${type}_au option[value='']`).prop('selected', true);
+                                            break;
+                                    }
+                                    break;
+                                default:
+                                    $(`#${string}_${type}_au option[value='${choose.value}']`)[0].remove();
+                                    $(`#${string}_${type}_au option[value='']`).prop('selected', true);
+                                    break;
+                            }
                             success.style.display = 'block';
                         } else {
                             error.innerText = 'Submit error';
@@ -87,7 +115,21 @@ function select_form(string, type){
                         error.style.display = 'block';
                     }
                 }
-                xhr.send(`id=${choose.value}&t=${type}`);
+                switch(type){
+                    case 'learner':
+                        switch(string){
+                            case 'assign':
+                                xhr.send(`id=${choose.value}&t=${type}&l=${$(`#${string}_${type}_au2`)[0].value}&i=${$(`#${string}_${type}_au3`)[0].value}`);
+                                break;
+                            case 'remove':
+                                xhr.send(`id=${choose.value}&t=${type}`);
+                                break;
+                        }
+                        break;
+                    default:
+                        xhr.send(`id=${choose.value}&t=${type}`);
+                        break;
+                }
             }
         });
     }
@@ -96,9 +138,11 @@ select_form('assign', 'iqa');
 select_form('remove', 'iqa');
 select_form('assign', 'course');
 select_form('remove', 'course');
+select_form('assign', 'learner');
+select_form('remove', 'learner');
 //Function used to render data
 function view_data(string, type){
-    if((string == 'view' || string == 'logs') && (type == 'iqa' || type == 'course')){
+    if((string == 'view' || string == 'logs') && (type == 'iqa' || type == 'course' || type == 'learner')){
         const div = $(`#${string}_${type}_div`)[0];
         const error = $(`#${string}_${type}_error`)[0];
         const content = $(`#${string}_${type}_content`)[0];
@@ -146,8 +190,10 @@ view_data('view', 'iqa');
 view_data('logs', 'iqa');
 view_data('view', 'course');
 view_data('logs', 'course');
+view_data('view', 'learner');
+view_data('logs', 'learner');
 //Function is used to retrieve log data dependant on the form data
-['iqa', 'course'].forEach(function(type){
+['iqa', 'course', 'learner'].forEach(function(type){
     $(`#logs_${type}_filter_form`)[0].addEventListener('submit', (e)=>{
         e.preventDefault();
         const error = $(`#logs_${type}_error`)[0];
@@ -179,7 +225,7 @@ view_data('logs', 'course');
     });
 })
 function header_clicked(string, integer, type){
-    if((string == 'view' || string == 'logs') && (type == 'iqa' || type == 'course')){
+    if((string == 'view' || string == 'logs') && (type == 'iqa' || type == 'course' || type == 'learner')){
         //set the headers of the table to contain the correct arrow showing how the table is sorted
         const headers = $(`#${string}_${type}_thead`).find('tr:first th');
         let order = 'asc';
@@ -278,5 +324,19 @@ function header_clicked(string, integer, type){
                 tbody.innerHTML += row;
             });
         }
+    }
+}
+function select_changed(type){
+    if(type == 'assign' || type == 'remove'){
+        $(`.${type}au2`).each(function(index, item){
+            $(this)[0].hidden = true;
+            $(this)[0].hidden = true;
+        });
+        $(`.${type}au2_${$(`#${type}_learner_au`)[0].value}`).each(function(index, item){
+            $(this)[0].hidden = false;
+            $(this)[0].disabled = false;
+        });
+        $(`#${type}_learner_au2`)[0].style.display = 'block';
+        $(`#${type}_learner_au3`)[0].style.display = 'block';
     }
 }
