@@ -109,6 +109,7 @@ if(!isset($_SESSION['iqa_admin'])){
                                     $returnText->return = str_replace("  ","",$returnText->return);
                                     break;
                             }
+                            \local_iqa\event\viewed_assign_logs::create(array('context' => \context_system::instance(), 'other' => $type))->trigger();
                         }
                     }
                 }
