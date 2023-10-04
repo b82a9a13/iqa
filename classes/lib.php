@@ -116,7 +116,7 @@ class lib{
         $records = $DB->get_records_sql('SELECT i.id as id, i.userid as userid, u.firstname as ufirstname, u.lastname as ulastname, i.iqaid as iqaid, ua.firstname as uafirstname, ua.lastname as ualastname, i.type as type, i.time as time FROM {iqa_assignment_log} i
             LEFT JOIN {user} u ON u.id = i.userid
             LEFT JOIN {user} ua ON ua.id = i.iqaid
-            WHERE i.time >= ? AND i.time <= ? AND i.option = "User"',[$startdate, $enddate]);
+        WHERE i.time >= ? AND i.time <= ? AND i.option = "User"',[$startdate, $enddate]);
         $array = [];
         if(count($records) > 0){
             foreach($records as $record){
@@ -322,5 +322,21 @@ class lib{
             }
         }
         return false;
+    }
+
+    //Get learner assignment logs
+    public function get_learner_assign_logs($startdate, $endate): array{
+        global $DB;
+        $records = $DB->get_records_sql('SELECT i.id as id, i.userid as userid, u.firstname as ufirstname, u.lastname as ulastname, i.iqaid as iqaid, uu.firstname as uufirstname, uu.lastname as uulastname, i.learnerid as learnerid, uuu.firstname as uuufirstname, uuu.lastname as uuulastname, i.courseid as courseid, c.fullname as fullname, i.type as type, i.time as time FROM {iqa_assignment_log} i
+            LEFT JOIN {user} u ON u.id = i.userid
+            LEFT JOIN {user} uu ON uu.id = i.iqaid
+            LEFT JOIN {user} uuu ON uuu.id = i.learnerid
+            LEFT JOIN {course} c ON c.id = i.courseid
+        WHERE i.time >= ? AND i.time <= ? AND i.option = "Learner"',[$startdate, $endate]);
+        $array = [];
+        foreach($records as $record){
+            array_push($array, [$record->time, $record->type, $record->uuufirstname.' '.$record->uuulastname, $record->learnerid, $record->fullname, $record->courseid, $record->uufirstname.' '.$record->uulastname, $record->iqaid, $record->ufirstname.' '.$record->ulastname, $record->userid]);
+        }
+        return $array;
     }
 }

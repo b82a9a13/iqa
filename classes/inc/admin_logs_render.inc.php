@@ -32,7 +32,7 @@ if(!isset($_SESSION['iqa_admin'])){
                     $returnText->error = get_string('missing_tv', $p);
                 } else {
                     $type = $_POST['t'];
-                    if(!in_array($type, ['course', 'iqa'])){
+                    if(!in_array($type, ['course', 'iqa', 'learner'])){
                         $returnText->error = get_string('invalid_tp', $p);
                     } else {
                         $array = [];
@@ -48,31 +48,67 @@ if(!isset($_SESSION['iqa_admin'])){
                                 $strings[0] = 'User';
                                 $strings[1] = 'course/view.php';
                                 break;
+                            case 'learner':
+                                $array = $lib->get_learner_assign_logs($sd, $ed);
+                                break;
                         }
                         if(!empty($array)){
-                            $returnText->return = "<table class='table table-bordered table-striped table-hover'>
-                                <thead id='logs_".$type."_thead'>
-                                    <tr>
-                                        <th class='c-pointer' onclick='header_clicked(`logs`, 0, `$type`)' sort='asc'>Date & Time <span>&uarr;</span></th>
-                                        <th class='c-pointer' onclick='header_clicked(`logs`, 1, `$type`)' sort>Action <span></span></th>
-                                        <th class='c-pointer' onclick='header_clicked(`logs`, 2, `$type`)' sort>Affected $strings[0] <span></span></th>
-                                        <th class='c-pointer' onclick='header_clicked(`logs`, 3, `$type`)' sort>User <span></span></th>
-                                    </tr>
-                                </thead>
-                                <tbody id='logs_".$type."_tbody'>
-                            ";
-                            foreach($array as $arra){
-                                $returnText->return .= "
-                                    <tr>
-                                        <td dtval='$arra[0]'>".date('d/m/Y H:i:s',$arra[0])."</td>
-                                        <td>$arra[1]</td>
-                                        <td><a href='./../../$strings[1]?id=$arra[4]' target='_blank'>$arra[5]</a></td>
-                                        <td><a href='./../../$strings[2]?id=$arra[2]' target='_blank'>$arra[3]</a></td>
-                                    </tr>
-                                ";
+                            switch($type){
+                                case 'learner':
+                                    $returnText->return = "<table class='table table-bordered table-striped table-hover'>
+                                        <thead id='logs_".$type."_thead'>
+                                            <tr>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 0, `$type`)' sort='asc'>Date & Time <span>&uarr;</span></th>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 1, `$type`)' sort>Action <span></span></th>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 2, `$type`)' sort>Affected User <span></span></th>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 3, `$type`)' sort>Course <span></span></th>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 4, `$type`)' sort>IQA <span></span></th>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 5, `$type`)' sort>User <span></span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id='logs_".$type."_tbody'>
+                                    ";
+                                    foreach($array as $arra){
+                                        $returnText->return .= "
+                                            <tr>
+                                                <td dtval='$arra[0]'>".date('d/m/Y H:i:s',$arra[0])."</td>
+                                                <td>$arra[1]</td>
+                                                <td><a href='./../../user/profile.php?id=$arra[3]' target='_blank'>$arra[2]</a></td>
+                                                <td><a href='./../../course/view.php?id=$arra[5]' target='_blank'>$arra[4]</a></td>
+                                                <td><a href='./../../user/profile.php?id=$arra[7]' target='_blank'>$arra[6]</a></td>
+                                                <td><a href='./../../user/profile.php?id=$arra[9]' target='_blank'>$arra[8]</a></td>
+                                            </tr>
+                                        ";
+                                    }
+                                    $returnText->return .= "</tbody></table>";
+                                    $returnText->return = str_replace("  ","",$returnText->return);
+                                    break;
+                                default:
+                                    $returnText->return = "<table class='table table-bordered table-striped table-hover'>
+                                        <thead id='logs_".$type."_thead'>
+                                            <tr>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 0, `$type`)' sort='asc'>Date & Time <span>&uarr;</span></th>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 1, `$type`)' sort>Action <span></span></th>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 2, `$type`)' sort>Affected $strings[0] <span></span></th>
+                                                <th class='c-pointer' onclick='header_clicked(`logs`, 3, `$type`)' sort>User <span></span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id='logs_".$type."_tbody'>
+                                    ";
+                                    foreach($array as $arra){
+                                        $returnText->return .= "
+                                            <tr>
+                                                <td dtval='$arra[0]'>".date('d/m/Y H:i:s',$arra[0])."</td>
+                                                <td>$arra[1]</td>
+                                                <td><a href='./../../$strings[1]?id=$arra[4]' target='_blank'>$arra[5]</a></td>
+                                                <td><a href='./../../$strings[2]?id=$arra[2]' target='_blank'>$arra[3]</a></td>
+                                            </tr>
+                                        ";
+                                    }
+                                    $returnText->return .= "</tbody></table>";
+                                    $returnText->return = str_replace("  ","",$returnText->return);
+                                    break;
                             }
-                            $returnText->return .= "</tbody></table>";
-                            $returnText->return = str_replace("  ","",$returnText->return);
                         }
                     }
                 }
